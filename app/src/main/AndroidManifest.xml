@@ -37,7 +37,13 @@
         <activity
             android:name=".CameraActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".UploadActivity" android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".UploadActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".GlassActivity"
+            android:screenOrientation="portrait"/>
+
     </application>
 
 </manifest>

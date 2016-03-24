@@ -4,7 +4,6 @@ import android.content.Context;
 
 import java.lang.ref.WeakReference;
 
-import ksu.tourpedia.identify.CloudSight.CloudMain;
 import ksu.tourpedia.identify.Constants;
 import ksu.tourpedia.identify.helpers.NotificationHelper;
 import ksu.tourpedia.identify.imgurmodel.ImageResponse;

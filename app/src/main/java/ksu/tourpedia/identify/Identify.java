@@ -16,15 +16,19 @@ public class Identify extends AppCompatActivity {
 
 
    public void useMobileCamera(View view){
-
        Intent intent=new Intent(this,CameraActivity.class);
        startActivity(intent);
    }
 
   public void useGlassCamera(View view){
 
-      Toast toast=Toast.makeText(this, "Available soon..", Toast.LENGTH_SHORT);
-      toast.show();
+      /*Toast toast=Toast.makeText(this, "Available soon..", Toast.LENGTH_SHORT);
+      toast.show();*/
+
+      Intent intent=new Intent(this,GlassActivity.class);
+      startActivity(intent);
+
+
   }
 
 }

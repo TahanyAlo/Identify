@@ -2,7 +2,6 @@
     <string name="app_name">Identify</string>
 
 
-
     <!--From imgur code-->
     <string name="notification_fail">Image failed to upload...</string>
     <string name="notification_share_link">Share link</string>
