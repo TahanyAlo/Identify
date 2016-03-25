@@ -24,7 +24,7 @@ public class UploadActivity extends AppCompatActivity {
     Context context=this;
 
 
-    TextView message;
+    static TextView message;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -60,15 +60,32 @@ public class UploadActivity extends AppCompatActivity {
         // upload.description = uploadDesc.getText().toString();
     }
 
+    public static void showResults(String result){
+
+
+        message.setText("Status: "+result);
+
+        if(VariablesAndConstants.isFromGlass){
+
+            GlassActivity.sendToGlass(result);
+
+            VariablesAndConstants.isFromGlass=false;
+        }
+    }
     private class UiCallback implements Callback<ImageResponse> {
 
         @Override
         public void success(ImageResponse imageResponse, Response response) {
             // clearInput();
-            new CloudMain(imageResponse);
+            new CloudMain().execute(imageResponse.data.link);//TODO: make it static or Async...
 
-            message.setText("Sorry :( GO search for Log with Tag (debug) to see results!! ");
+
+
+
+
         }
+
+
 
         @Override
         public void failure(RetrofitError error) {
@@ -79,6 +96,8 @@ public class UploadActivity extends AppCompatActivity {
 
                 Toast toast = Toast.makeText(context, "No internet connection", duration);
                 toast.show();
+            }else {
+                GlassActivity.sendToGlass("Failed");
             }
         }
     }

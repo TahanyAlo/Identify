@@ -34,6 +34,7 @@ public class GlassActivity extends AppCompatActivity {
     Handler mHandler;
     File pictureFile;
     FileOutputStream fos;
+    static ConnectedThread connectedThread;
 
     //========Constants=========
     final int REQUEST_ENABLE_BLUETOOTH = 1;
@@ -123,13 +124,20 @@ public class GlassActivity extends AppCompatActivity {
 
     public void requestBluetooth(){
 
+            VariablesAndConstants.isFromGlass=true;//In order to send the info to the glass later on.
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BLUETOOTH);
 
     }
 
 
+     public static void sendToGlass(String result){
 
+
+         connectedThread.write(result.getBytes());
+
+
+     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -164,6 +172,8 @@ public class GlassActivity extends AppCompatActivity {
                 finish();//No Bluetooth NO Glass
                            }
 
+
+
         }
     }
 
@@ -179,7 +189,6 @@ public class GlassActivity extends AppCompatActivity {
 
 
     public void uploadImage(){
-        //TODO: upload activity call
         Intent intent = new Intent(this, UploadActivity.class);
         startActivity(intent);
     }
@@ -236,7 +245,10 @@ public class GlassActivity extends AppCompatActivity {
        public void  manageConnectedSocket(BluetoothSocket socket){
 
            //TODO: Call the connectedThread.
-           new ConnectedThread(socket).start();
+           connectedThread=new ConnectedThread(socket);
+           connectedThread.start();
+
+
        }
 
 
@@ -348,7 +360,11 @@ public class GlassActivity extends AppCompatActivity {
         public void write(byte[] bytes) {
             try {
                 mmOutStream.write(bytes);
-            } catch (IOException e) { }
+            } catch (IOException e) {
+
+                Log.d("debug","ERROR while writing: "+e.getMessage());
+
+            }
         }
 
         /* Call this from the main activity to shutdown the connection */
