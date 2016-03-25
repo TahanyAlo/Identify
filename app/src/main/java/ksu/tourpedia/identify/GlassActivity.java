@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.UUID;
 
 public class GlassActivity extends AppCompatActivity {
@@ -247,7 +248,7 @@ public class GlassActivity extends AppCompatActivity {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
-
+        public int bytesReceived=0;
         public ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
             InputStream tmpIn = null;
@@ -264,27 +265,80 @@ public class GlassActivity extends AppCompatActivity {
             mmOutStream = tmpOut;
         }
 
+        int totalBytesToReceieve;
+        int headerBytes=0;
+
+        private void parseHeader(byte[] bytes) {
+            ByteBuffer bb = ByteBuffer.wrap(bytes);
+            totalBytesToReceieve = (int) bb.getLong();
+            Log.d("debug", "Bytes to receive: " + totalBytesToReceieve);
+        }
+
         public void run() {
             byte[] buffer = new byte[1024];  // buffer store for the stream
             int bytes; // bytes returned from read()
+            boolean Done=false;
+            boolean Header=true;
+            boolean headerReceived=false;
             try {
             // Keep listening to the InputStream until an exception occurs
-            while ((bytes = mmInStream.read(buffer))!=-1) {// Read from the InputStream
 
 
+
+                while (!Done) {// Read from the InputStream
+
+               // if(mmInStream.available()>0){
+                bytes = mmInStream.read(buffer);
                     // Send the obtained bytes to the UI activity
                     //TODO:Here is all the work start :)
                 Log.d("debug","bytes before: "+ bytes);
                   //  mHandler.obtainMessage(MESSAGE_READ, bytes, 0, buffer)
                             //.sendToTarget();
-                fos.write(buffer,0,bytes);
+                   if(Header){
+
+                       headerBytes=bytes;
+
+                     //  if(headerBytes>0&&!headerReceived) {
+                           parseHeader(buffer);
+                          // headerReceived=true;
+                      // }
+                      // if(headerBytes>=1024) {
+                          Header = false;
+                       if(headerBytes<1024){
+                           mmInStream.read(buffer,0,1024-headerBytes);
+                          // int a= headerBytes-1024;
+                          // int b= bytes-a;
+
+                          // fos.write(buffer, b-1, bytes-b);
+
+                       }
+                       //}
+                   }/*else if(headerBytes<1024&&!headerReceived){
+                       headerReceived=true;
+
+                        int a=1024-headerBytes;
+                       fos.write(buffer,a , bytes-a);
+
+                   } */else
+                   {
+                        fos.write(buffer, 0, bytes);
+                         bytesReceived+=bytes;
+                       Log.d("debug", "totalBytesToReceieve = " + totalBytesToReceieve);
+                       Log.d("debug","bytesReceived = "+bytesReceived);
+                    if(totalBytesToReceieve<=bytesReceived )
+                        Done=true;}
+                //  }
 
 
 
-            }} catch (IOException e) {
+            }
+                Log.d("debug", "DOne in outside exeption yaaaaaaaaaaaaaaaaaaaaay!");
+                mHandler.obtainMessage(DONE_READ).sendToTarget();
+
+            } catch (IOException e) {
 
                 mHandler.obtainMessage(DONE_READ).sendToTarget();
-                Log.d("debug","DOne in exeption");
+                Log.d("debug","DOne in exeption: "+e.getMessage());
 
             }
         }
