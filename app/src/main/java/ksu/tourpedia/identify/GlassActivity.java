@@ -321,6 +321,7 @@ public class GlassActivity extends AppCompatActivity {
 
                    } */else
                    {
+
                         fos.write(buffer, 0, bytes);
                          bytesReceived+=bytes;
                        Log.d("debug", "totalBytesToReceieve = " + totalBytesToReceieve);
