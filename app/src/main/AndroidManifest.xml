@@ -43,6 +43,9 @@
         <activity
             android:name=".GlassActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".WikiJsoup"
+            android:screenOrientation="portrait"/>
 
     </application>
 
